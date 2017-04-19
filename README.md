@@ -4,7 +4,7 @@ Package throosea.com/log implements a logging infrastructure for Go.
 
 
 ```
-# with ShowMethod
+# without ShowMethod
 2017-04-19 18:09:07.616 INFO  [          t.j.e.http_server:63] Juno HttpServer Initialize()
 2017-04-19 18:09:07.616 INFO  [          t.j.e.http_server:76] web guard listen : 10.0.1.2:9180
 2017-04-19 18:09:07.616 INFO  [          t.j.w.web_service:67] using url seed : FCSTdnEC
@@ -14,7 +14,7 @@ Package throosea.com/log implements a logging infrastructure for Go.
 2017-04-19 18:09:07.616 INFO  [         t.j.e.http_server:136] start web guard listening...
 2017-04-19 18:09:07.616 INFO  [         t.j.e.system_base:105] SystemBase Bootup()
 
-# without ShowMethod
+# with ShowMethod
 2017-04-19 18:05:37.979 INFO  [   t.j.e.http_server.Initialize():93] JupiterHttpServer Initialize()
 2017-04-19 18:05:37.979 INFO  [  t.j.e.http_server.Initialize():106] web server listen : 0.0.0.0:9190
 2017-04-19 18:05:37.980 DEBUG [.repo_file_user.loadXmlUserData():62] using xml : /IronForge/FATIMA_HOME/data/jupiter/user_data.xml
