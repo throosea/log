@@ -31,15 +31,6 @@ import (
 )
 
 
-const (
-	LOG4FATIMA_PROP_BACKUP_DAYS           = "log4fatima.backup.days"
-	LOG4FATIMA_PROP_SHOW_METHOD           = "log4fatima.method.show"
-	LOG4FATIMA_PROP_SOURCE_PRINTSIZE      = "log4fatima.source.printsize"
-	LOG4FATIMA_PROP_FILE_SIZE_LIMIT       = "log4fatima.filesize.limit"
-	LOG4FATIMA_DEFAULT_BACKUP_FILE_NUMBER = 30
-	LOG4FATIMA_DEFAULT_SOURCE_PRINTSIZE = 30
-)
-
 var writingLogEvent = false
 
 var logEventChannel = make(chan LogEvent, 128)
