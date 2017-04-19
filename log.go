@@ -67,7 +67,8 @@ func Initialize(pref preference)  {
 }
 
 func SetSourcePrintSize(newValue uint8) {
-	if newValue < 4 {
+	// minimum source print size : 10
+	if newValue < 10 {
 		return
 	}
 
@@ -79,7 +80,8 @@ func SetShowMethod(newValue bool) {
 }
 
 func SetKeepingFileDays(days uint16)	{
-	if days < 1 {
+	// minimum keeping file days : 2
+	if days < 2 || logPreference.StreamMode == STREAM_MODE_STDOUT {
 		return
 	}
 
@@ -93,8 +95,9 @@ func SetKeepingFileDays(days uint16)	{
 	}
 }
 
-func SetFileSizeLimit(mb uint16)	{
-	if mb < 1 {
+func SetFileSizeLimitMB(mb uint16)	{
+	// minimum file size limit mb : 1
+	if mb < 1 || logPreference.StreamMode == STREAM_MODE_STDOUT {
 		return
 	}
 
@@ -111,7 +114,7 @@ func GetLevel() LogLevel {
 }
 
 func Close() error {
-	if loggerStatus == LOGGING_STATUS_SHUTDOWN {
+	if loggerStatus == LOGGING_STATUS_SHUTDOWN  {
 		return nil
 	}
 

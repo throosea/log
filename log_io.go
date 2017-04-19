@@ -40,9 +40,13 @@ const (
 
 func writeLogEvent(log LogEvent) {
 	log.publish()
-	ensureLogFileExist()
-	ensureTodayLog(log.getTime())
-	writeLogEventToFile(log.getMessage())
+	if logPreference.StreamMode == STREAM_MODE_STDOUT {
+		fmt.Printf("%s\n", log.getMessage())
+	} else {
+		ensureLogFileExist()
+		ensureTodayLog(log.getTime())
+		writeLogEventToFile(log.getMessage())
+	}
 }
 
 func ensureTodayLog(t *time.Time) {
