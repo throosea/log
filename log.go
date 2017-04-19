@@ -88,7 +88,7 @@ func SetKeepingFileDays(days uint16)	{
 	if old != days {
 		Info("logging backup days changed to %d", logPreference.KeepingFileDays)
 		go func() {
-			keepingFileDaysChanged()
+			removeOldLogFiles()
 		}()
 	}
 }
@@ -184,7 +184,6 @@ func print(level int, v ...interface{}) {
 	if logPreference.DeliveryMode == DELIVERY_MODE_SYNC {
 		writeLogEvent(logEvent)
 	} else {
-		//message.publish()
 		logEventChannel <- logEvent
 	}
 }

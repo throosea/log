@@ -34,6 +34,10 @@ import (
 	"strings"
 )
 
+const (
+	TIME_YYYYMMDD = "2006-01-02"
+)
+
 func writeLogEvent(log LogEvent) {
 	log.publish()
 	ensureLogFileExist()
@@ -83,7 +87,6 @@ func ensureLogFileExist() {
 	logPreference.logFileLoaded = true
 }
 
-// 오래된(지난 날짜) 로그 파일을 이동시키고 신규 로그 파일을 생성한다
 func moveToBackupLog() {
 	var err error
 	var stat os.FileInfo
@@ -105,7 +108,7 @@ func moveToBackupLog() {
 	backupFilePath := fmt.Sprintf("%s%c%s.%s.log",
 		logPreference.logFolder,
 		filepath.Separator,
-		logPreference.ProcessName, stat.ModTime().Format("2006-01-02"))
+		logPreference.ProcessName, stat.ModTime().Format(TIME_YYYYMMDD))
 	os.Rename(logPreference.logFilePath, backupFilePath)
 
 	// open for new log file
@@ -118,7 +121,7 @@ func moveToBackupLog() {
 	logPreference.currentLogFileTime = stat.ModTime()
 
 	go func() {
-		keepingFileDaysChanged()
+		removeOldLogFiles()
 	}()
 }
 
@@ -129,7 +132,7 @@ func writeLogEventToFile(s string) (n int, err error) {
 	return logPreference.logFilePtr.WriteString(s)
 }
 
-func keepingFileDaysChanged() {
+func removeOldLogFiles() {
 	if logPreference.KeepingFileDays < 1 {
 		return
 	}
@@ -162,7 +165,6 @@ func keepingFileDaysChanged() {
 		}
 
 		createdDateExpression := file.Name()[dotIndex+1:lastDotIndex]
-		TIME_YYYYMMDD := "2006-01-02"
 		createdDate, err := time.Parse(TIME_YYYYMMDD, createdDateExpression)
 		if err != nil {
 			continue
