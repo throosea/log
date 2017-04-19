@@ -29,6 +29,7 @@ import (
 	"strconv"
 	"time"
 	"strings"
+	"fmt"
 )
 
 
@@ -63,6 +64,13 @@ const (
 )
 
 type LogDeliveryMode uint8
+
+const (
+	STREAM_MODE_STDOUT = 1 << iota
+	STREAM_MODE_FILE
+)
+
+type LogStreamMode uint8
 
 // log event
 type LogEvent interface {
@@ -140,6 +148,7 @@ func ConvertLogLevelToHexa(value string) string {
 // logging preference structure
 type preference struct {
 	logFolder          string
+	StreamMode		   LogStreamMode
 	ShowMethod         bool
 	KeepingFileDays    uint16
 	SourcePrintSize    uint8
@@ -155,16 +164,19 @@ type preference struct {
 }
 
 
-func NewPreference(logFolder string) (preference, error)	{
+func NewPreference(logFolder string) preference	{
 	pref := preference{}
 
 	if len(logFolder) < 1 {
-		return pref, errors.New("empty log path")
-	}
-
-	err := ensureDirectory(logFolder)
-	if err != nil {
-		return pref, err
+		pref.StreamMode = STREAM_MODE_STDOUT
+	} else {
+		err := ensureDirectory(logFolder)
+		if err != nil {
+			fmt.Printf("fail to prepare log folder : %s\n", err.Error())
+			pref.StreamMode = STREAM_MODE_STDOUT
+		} else {
+			pref.StreamMode = STREAM_MODE_FILE
+		}
 	}
 
 	pref.ShowMethod = false
@@ -176,7 +188,7 @@ func NewPreference(logFolder string) (preference, error)	{
 	pref.SourcePrintSize = DEFAULT_SOURCE_PRINT_SIZE
 	pref.MaxErrorTraceLevel = DEFAULT_ERROR_TRACE_LEVEL
 
-	return pref, nil
+	return pref
 }
 
 func normalizePreference(pref *preference) {
