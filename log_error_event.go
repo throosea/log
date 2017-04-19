@@ -40,7 +40,7 @@ func newErrorTraceLogEvent(pc uintptr, file string, line int) *ErrorTraceLogEven
 	event.file = file
 	event.line = line
 	event.tracePoint = make([]TracePoint, 0)
-	if loggPreference.ShowMethod {
+	if logPreference.ShowMethod {
 		event.funcName = findFunctionName(pc)
 	}
 	return &event

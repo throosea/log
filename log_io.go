@@ -42,45 +42,45 @@ func writeLogEvent(log LogEvent) {
 }
 
 func ensureTodayLog(t *time.Time) {
-	if loggPreference.currentLogFileTime.Year() != t.Year() ||
-		loggPreference.currentLogFileTime.Month() != t.Month() ||
-		loggPreference.currentLogFileTime.Day() != t.Day() {
+	if logPreference.currentLogFileTime.Year() != t.Year() ||
+		logPreference.currentLogFileTime.Month() != t.Month() ||
+		logPreference.currentLogFileTime.Day() != t.Day() {
 		moveToBackupLog()
 	}
 }
 
 func ensureLogFileExist() {
-	if loggPreference.logFileLoaded {
+	if logPreference.logFileLoaded {
 		return
 	}
 
 	var err error
 	var stat os.FileInfo
 
-	stat, err = os.Stat(loggPreference.logFilePath)
+	stat, err = os.Stat(logPreference.logFilePath)
 	if err != nil {
 		if os.IsNotExist(err) {
-			loggPreference.logFilePtr, err = os.Create(loggPreference.logFilePath)
+			logPreference.logFilePtr, err = os.Create(logPreference.logFilePath)
 			if err != nil {
-				fmt.Printf("%s fail to create : %s", loggPreference.logFilePath, err)
-				loggPreference.logFilePtr = nil
+				fmt.Printf("%s fail to create : %s", logPreference.logFilePath, err)
+				logPreference.logFilePtr = nil
 				return
 			}
-			loggPreference.currentLogFileTime = time.Now()
+			logPreference.currentLogFileTime = time.Now()
 		} else if stat.IsDir() {
-			fmt.Printf("%s path exist as directory. fail to logging", loggPreference.logFilePath)
-			loggPreference.logFilePtr = nil
+			fmt.Printf("%s path exist as directory. fail to logging", logPreference.logFilePath)
+			logPreference.logFilePtr = nil
 		}
 	} else {
-		loggPreference.logFilePtr, err = os.OpenFile(loggPreference.logFilePath, os.O_APPEND|os.O_WRONLY, 0600)
+		logPreference.logFilePtr, err = os.OpenFile(logPreference.logFilePath, os.O_APPEND|os.O_WRONLY, 0600)
 		if err != nil {
 			fmt.Printf("fail to open : %s", err)
-			loggPreference.logFilePtr = nil
+			logPreference.logFilePtr = nil
 		}
-		loggPreference.currentLogFileTime = stat.ModTime()
+		logPreference.currentLogFileTime = stat.ModTime()
 	}
 
-	loggPreference.logFileLoaded = true
+	logPreference.logFileLoaded = true
 }
 
 // 오래된(지난 날짜) 로그 파일을 이동시키고 신규 로그 파일을 생성한다
@@ -88,34 +88,34 @@ func moveToBackupLog() {
 	var err error
 	var stat os.FileInfo
 
-	stat, err = os.Stat(loggPreference.logFilePath)
+	stat, err = os.Stat(logPreference.logFilePath)
 	if err != nil {
 		fmt.Printf("fail to stat log file : %s\n", err)
-		loggPreference.logFilePtr = nil
+		logPreference.logFilePtr = nil
 		return
 	}
 
 	// close current log file ptr
-	if loggPreference.logFilePtr != nil {
-		loggPreference.logFilePtr.Close()
-		loggPreference.logFilePtr = nil
+	if logPreference.logFilePtr != nil {
+		logPreference.logFilePtr.Close()
+		logPreference.logFilePtr = nil
 	}
 
 	// move current file to backup
 	backupFilePath := fmt.Sprintf("%s%c%s.%s.log",
-		loggPreference.logFolder,
+		logPreference.logFolder,
 		filepath.Separator,
-		loggPreference.ProcessName, stat.ModTime().Format("2006-01-02"))
-	os.Rename(loggPreference.logFilePath, backupFilePath)
+		logPreference.ProcessName, stat.ModTime().Format("2006-01-02"))
+	os.Rename(logPreference.logFilePath, backupFilePath)
 
 	// open for new log file
-	loggPreference.logFilePtr, err = os.OpenFile(loggPreference.logFilePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
+	logPreference.logFilePtr, err = os.OpenFile(logPreference.logFilePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
 	if err != nil {
 		fmt.Printf("fail to open for new log file : %s\n", err)
 	}
 
-	stat, _ = loggPreference.logFilePtr.Stat()
-	loggPreference.currentLogFileTime = stat.ModTime()
+	stat, _ = logPreference.logFilePtr.Stat()
+	logPreference.currentLogFileTime = stat.ModTime()
 
 	go func() {
 		keepingFileDaysChanged()
@@ -123,24 +123,24 @@ func moveToBackupLog() {
 }
 
 func writeLogEventToFile(s string) (n int, err error) {
-	if loggPreference.logFilePtr == nil {
+	if logPreference.logFilePtr == nil {
 		return 0, nil
 	}
-	return loggPreference.logFilePtr.WriteString(s)
+	return logPreference.logFilePtr.WriteString(s)
 }
 
 func keepingFileDaysChanged() {
-	if loggPreference.KeepingFileDays < 1 {
+	if logPreference.KeepingFileDays < 1 {
 		return
 	}
 
 	// find files in log path
-	files, err := ioutil.ReadDir(loggPreference.logFolder)
+	files, err := ioutil.ReadDir(logPreference.logFolder)
 	if err != nil {
 		return
 	}
 
-	express := fmt.Sprintf("%s\\.[0-9]+-[0-9]+-[0-9]+\\.log", loggPreference.ProcessName)
+	express := fmt.Sprintf("%s\\.[0-9]+-[0-9]+-[0-9]+\\.log", logPreference.ProcessName)
 	var validLogFileId = regexp.MustCompile(express)
 	for _, file := range files {
 		if !strings.HasSuffix(file.Name(), "log") {
@@ -168,10 +168,10 @@ func keepingFileDaysChanged() {
 			continue
 		}
 
-		diff := time.Duration(24 * loggPreference.KeepingFileDays) * time.Hour
+		diff := time.Duration(24 * logPreference.KeepingFileDays) * time.Hour
 		deadline := time.Now().Add(-diff)
 		if createdDate.Before(deadline) {
-			os.Remove(filepath.Join(loggPreference.logFolder, file.Name()))
+			os.Remove(filepath.Join(logPreference.logFolder, file.Name()))
 		}
 	}
 }

@@ -37,7 +37,7 @@ func newGeneralLogEvent(pc uintptr, file string, line int) *GeneralLogEvent {
 	event.pc = pc
 	event.file = file
 	event.line = line
-	if loggPreference.ShowMethod {
+	if logPreference.ShowMethod {
 		event.funcName = findFunctionName(pc)
 	}
 	return &event
@@ -97,13 +97,13 @@ func (this *GeneralLogEvent) buildMessage(f func() string) string {
 func (this *GeneralLogEvent) buildSourceDescription(source string) string {
 	var message string
 
-	if loggPreference.ShowMethod {
+	if logPreference.ShowMethod {
 		message = fmt.Sprintf("%s.%s():%d", source,  this.funcName, this.line)
 	} else {
 		message = fmt.Sprintf("%s:%d", source,  this.line)
 	}
 
-	startIndex := len(message) - loggPreference.SourcePrintSize
+	startIndex := len(message) - logPreference.SourcePrintSize
 	if startIndex >= 0 {
 		return message[startIndex:]
 	}

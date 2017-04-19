@@ -48,19 +48,19 @@ var effectiveLogLevel LogLevel = LOG_NONE
 
 type loggingStatus uint8
 
-var loggStatus loggingStatus = LOGGING_STATUS_NOT_STARTED
-var loggPreference preference
+var logerStatus loggingStatus = LOGGING_STATUS_NOT_STARTED
+var logPreference preference
 
 func Initialize(pref preference)  {
-	if loggStatus > LOGGING_STATUS_NOT_STARTED {
+	if logerStatus > LOGGING_STATUS_NOT_STARTED {
 		return
 	}
 
-	loggStatus = LOGGING_STATUS_RUNNING
-	loggPreference = pref
-	normalizePreference(&loggPreference)
-	loggPreference.logFilePath = fmt.Sprintf("%s.log", filepath.Join(pref.logFolder, pref.ProcessName))
-	if loggPreference.DeliveryMode == DELIVERY_MODE_ASYNC {
+	logerStatus = LOGGING_STATUS_RUNNING
+	logPreference = pref
+	normalizePreference(&logPreference)
+	logPreference.logFilePath = fmt.Sprintf("%s.log", filepath.Join(pref.logFolder, pref.ProcessName))
+	if logPreference.DeliveryMode == DELIVERY_MODE_ASYNC {
 		go func() {
 			for {
 				logEvent := <-logEventChannel
@@ -72,7 +72,7 @@ func Initialize(pref preference)  {
 			}
 		}()
 	}
-	SetLevel(loggPreference.DefaultLogLevel)
+	SetLevel(logPreference.DefaultLogLevel)
 }
 
 func SetSourcePrintSize(newValue int) {
@@ -80,11 +80,11 @@ func SetSourcePrintSize(newValue int) {
 		return
 	}
 
-	loggPreference.SourcePrintSize = newValue
+	logPreference.SourcePrintSize = newValue
 }
 
 func SetShowMethod(newValue bool) {
-	loggPreference.ShowMethod = newValue
+	logPreference.ShowMethod = newValue
 }
 
 func SetKeepingFileDays(days int)	{
@@ -92,10 +92,10 @@ func SetKeepingFileDays(days int)	{
 		return
 	}
 
-	var old = loggPreference.KeepingFileDays
-	loggPreference.KeepingFileDays = days
+	var old = logPreference.KeepingFileDays
+	logPreference.KeepingFileDays = days
 	if old != days {
-		Info("logging backup days changed to %d", loggPreference.KeepingFileDays)
+		Info("logging backup days changed to %d", logPreference.KeepingFileDays)
 		go func() {
 			keepingFileDaysChanged()
 		}()
@@ -107,8 +107,8 @@ func SetFileSizeLimit(mb int)	{
 		return
 	}
 
-	loggPreference.LogfileSizeLimit = mb
-	Info("[Not yet support] logging file size limit to %d MB", loggPreference.LogfileSizeLimit)
+	logPreference.LogfileSizeLimit = mb
+	Info("[Not yet support] logging file size limit to %d MB", logPreference.LogfileSizeLimit)
 }
 
 func SetLevel(level LogLevel) {
@@ -120,13 +120,13 @@ func GetLevel() LogLevel {
 }
 
 func Close() error {
-	if loggPreference.DeliveryMode == DELIVERY_MODE_SYNC {
+	if logPreference.DeliveryMode == DELIVERY_MODE_SYNC {
 		return nil
 	}
 
 	for {
 		if len(logEventChannel) == 0 && !writingLogEvent {
-			loggStatus = LOGGING_STATUS_SHUTDOWN
+			logerStatus = LOGGING_STATUS_SHUTDOWN
 			return nil
 		}
 		time.Sleep(time.Millisecond * 1)
@@ -170,7 +170,7 @@ func print(level int, v ...interface{}) {
 
 	if _, ok := v[len(v)-1].(error); ok {
 		errEvent := newErrorTraceLogEvent(pc, file, line)
-		for i := 3; i < loggPreference.MaxErrorTraceLevel; i++ {
+		for i := 3; i < logPreference.MaxErrorTraceLevel; i++ {
 			pc, file, line, exist := runtime.Caller(i)
 			if !exist {
 				break
@@ -186,7 +186,7 @@ func print(level int, v ...interface{}) {
 	logEvent.setLevel(level)
 	logEvent.setArgs(v...)
 
-	if loggPreference.DeliveryMode == DELIVERY_MODE_SYNC {
+	if logPreference.DeliveryMode == DELIVERY_MODE_SYNC {
 		writeLogEvent(logEvent)
 	} else {
 		//message.publish()
