@@ -108,7 +108,7 @@ DeliveryMode | LogDeliveryMode | DELIVERY_MODE_SYNC | sync or async
 	* write message to file while logging event occured
 * DELIVERY_MODE_ASYNC
 	* write message using go func(). it could improve program execution because logging will be detached from main.
-	* if you use ASYNC mode, you have to call `log.Close()` when your program exit. if not you may lost some last logging message
+	* if you use ASYNC mode, you have to call `log.Close()` when your program exit. if not, you may lost some last logging message
 
 # log folder sample #
 ```
