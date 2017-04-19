@@ -39,15 +39,15 @@ var effectiveLogLevel LogLevel = LOG_NONE
 
 type loggingStatus uint8
 
-var logerStatus loggingStatus = LOGGING_STATUS_NOT_STARTED
+var loggerStatus loggingStatus = LOGGING_STATUS_NOT_STARTED
 var logPreference preference
 
 func Initialize(pref preference)  {
-	if logerStatus > LOGGING_STATUS_NOT_STARTED {
+	if loggerStatus > LOGGING_STATUS_NOT_STARTED {
 		return
 	}
 
-	logerStatus = LOGGING_STATUS_RUNNING
+	loggerStatus = LOGGING_STATUS_RUNNING
 	logPreference = pref
 	normalizePreference(&logPreference)
 	logPreference.logFilePath = fmt.Sprintf("%s.log", filepath.Join(pref.logFolder, pref.ProcessName))
@@ -111,13 +111,17 @@ func GetLevel() LogLevel {
 }
 
 func Close() error {
+	if loggerStatus == LOGGING_STATUS_SHUTDOWN {
+		return nil
+	}
+
 	if logPreference.DeliveryMode == DELIVERY_MODE_SYNC {
 		return nil
 	}
 
 	for {
 		if len(logEventChannel) == 0 && !writingLogEvent {
-			logerStatus = LOGGING_STATUS_SHUTDOWN
+			loggerStatus = LOGGING_STATUS_SHUTDOWN
 			return nil
 		}
 		time.Sleep(time.Millisecond * 1)
