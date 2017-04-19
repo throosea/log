@@ -103,7 +103,7 @@ func (this *GeneralLogEvent) buildSourceDescription(source string) string {
 		message = fmt.Sprintf("%s:%d", source,  this.line)
 	}
 
-	startIndex := len(message) - logPreference.SourcePrintSize
+	startIndex := len(message) - int(logPreference.SourcePrintSize)
 	if startIndex >= 0 {
 		return message[startIndex:]
 	}

@@ -66,7 +66,7 @@ func Initialize(pref preference)  {
 	SetLevel(logPreference.DefaultLogLevel)
 }
 
-func SetSourcePrintSize(newValue int) {
+func SetSourcePrintSize(newValue uint8) {
 	if newValue < 4 {
 		return
 	}
@@ -78,7 +78,7 @@ func SetShowMethod(newValue bool) {
 	logPreference.ShowMethod = newValue
 }
 
-func SetKeepingFileDays(days int)	{
+func SetKeepingFileDays(days uint16)	{
 	if days < 1 {
 		return
 	}
@@ -93,13 +93,13 @@ func SetKeepingFileDays(days int)	{
 	}
 }
 
-func SetFileSizeLimit(mb int)	{
+func SetFileSizeLimit(mb uint16)	{
 	if mb < 1 {
 		return
 	}
 
-	logPreference.LogfileSizeLimit = mb
-	Info("[Not yet support] logging file size limit to %d MB", logPreference.LogfileSizeLimit)
+	logPreference.LogfileSizeLimitMB = mb
+	Info("[Not yet support] logging file size limit to %d MB", logPreference.LogfileSizeLimitMB)
 }
 
 func SetLevel(level LogLevel) {
@@ -165,7 +165,7 @@ func print(level int, v ...interface{}) {
 
 	if _, ok := v[len(v)-1].(error); ok {
 		errEvent := newErrorTraceLogEvent(pc, file, line)
-		for i := 3; i < logPreference.MaxErrorTraceLevel; i++ {
+		for i := 3; i < int(logPreference.MaxErrorTraceLevel); i++ {
 			pc, file, line, exist := runtime.Caller(i)
 			if !exist {
 				break

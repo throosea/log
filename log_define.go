@@ -139,19 +139,19 @@ func ConvertLogLevelToHexa(value string) string {
 
 // logging preference structure
 type preference struct {
-	logFolder			string
-	ShowMethod			bool
-	KeepingFileDays		int
-	SourcePrintSize		int
-	LogfileSizeLimit	int
-	MaxErrorTraceLevel	int
-	ProcessName			string
-	DefaultLogLevel		LogLevel
-	DeliveryMode		LogDeliveryMode
-	logFileLoaded		bool
-	logFilePath			string
-	currentLogFileTime	time.Time
-	logFilePtr			*os.File
+	logFolder          string
+	ShowMethod         bool
+	KeepingFileDays    uint16
+	SourcePrintSize    uint8
+	LogfileSizeLimitMB uint16
+	MaxErrorTraceLevel uint8
+	ProcessName        string
+	DefaultLogLevel    LogLevel
+	DeliveryMode       LogDeliveryMode
+	logFileLoaded      bool
+	logFilePath        string
+	currentLogFileTime time.Time
+	logFilePtr         *os.File
 }
 
 
