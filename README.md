@@ -30,6 +30,10 @@ go get throosea.com/log
 or
 
 govendor fetch throosea.com/log
+
+or
+
+any other vendoring tools...
 ```
 
 
