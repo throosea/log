@@ -2,7 +2,6 @@
 
 Package throosea.com/log implements a logging infrastructure for Go. 
 
-
 ```
 # without ShowMethod
 2017-04-19 18:09:07.616 INFO  [          t.j.e.http_server:63] Juno HttpServer Initialize()
@@ -39,7 +38,8 @@ any other vendoring tools...
 
 # Example #
 
-```go
+```
+#!go
 
 package main
 
