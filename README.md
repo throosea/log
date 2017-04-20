@@ -55,7 +55,8 @@ func main() {
 	logpath := "/somewhere/logs"
 
 	// you have to create logging preference first
-	pref, _ := log.NewPreference(logpath)
+	// if you use empty logpath(""), then log will be written to stdout
+	pref := log.NewPreference(logpath)
 
 	// set some properties for logging
 	pref.ShowMethod = true
