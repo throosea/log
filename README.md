@@ -39,8 +39,7 @@ any other vendoring tools...
 
 # Example #
 
-```
-#!golang
+```go
 
 package main
 
