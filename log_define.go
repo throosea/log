@@ -148,7 +148,7 @@ func ConvertLogLevelToHexa(value string) string {
 // logging preference structure
 type preference struct {
 	logFolder          string
-	StreamMode		   LogStreamMode
+	streamMode         LogStreamMode
 	ShowMethod         bool
 	KeepingFileDays    uint16
 	SourcePrintSize    uint8
@@ -168,14 +168,14 @@ func NewPreference(logFolder string) preference	{
 	pref := preference{}
 
 	if len(logFolder) < 1 {
-		pref.StreamMode = STREAM_MODE_STDOUT
+		pref.streamMode = STREAM_MODE_STDOUT
 	} else {
 		err := ensureDirectory(logFolder)
 		if err != nil {
 			fmt.Printf("fail to prepare log folder : %s\n", err.Error())
-			pref.StreamMode = STREAM_MODE_STDOUT
+			pref.streamMode = STREAM_MODE_STDOUT
 		} else {
-			pref.StreamMode = STREAM_MODE_FILE
+			pref.streamMode = STREAM_MODE_FILE
 		}
 	}
 

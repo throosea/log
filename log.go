@@ -81,7 +81,7 @@ func SetShowMethod(newValue bool) {
 
 func SetKeepingFileDays(days uint16)	{
 	// minimum keeping file days : 2
-	if days < 2 || logPreference.StreamMode == STREAM_MODE_STDOUT {
+	if days < 2 || logPreference.streamMode == STREAM_MODE_STDOUT {
 		return
 	}
 
@@ -97,7 +97,7 @@ func SetKeepingFileDays(days uint16)	{
 
 func SetFileSizeLimitMB(mb uint16)	{
 	// minimum file size limit mb : 1
-	if mb < 1 || logPreference.StreamMode == STREAM_MODE_STDOUT {
+	if mb < 1 || logPreference.streamMode == STREAM_MODE_STDOUT {
 		return
 	}
 

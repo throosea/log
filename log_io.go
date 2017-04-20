@@ -40,7 +40,7 @@ const (
 
 func writeLogEvent(log LogEvent) {
 	log.publish()
-	if logPreference.StreamMode == STREAM_MODE_STDOUT {
+	if logPreference.streamMode == STREAM_MODE_STDOUT {
 		fmt.Printf("%s", log.getMessage())
 	} else {
 		ensureLogFileExist()
