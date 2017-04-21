@@ -132,31 +132,31 @@ func Close() error {
 }
 
 func Error(v ...interface{}) {
-	if effectiveLogLevel >= LOG_ERROR && len(v) > 0 {
+	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= LOG_ERROR && len(v) > 0 {
 		print(LOG_ERROR, v...)
 	}
 }
 
 func Warn(v ...interface{}) {
-	if effectiveLogLevel >= LOG_WARN && len(v) > 0 {
+	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= LOG_WARN && len(v) > 0 {
 		print(LOG_WARN, v...)
 	}
 }
 
 func Info(v ...interface{}) {
-	if effectiveLogLevel >= LOG_INFO && len(v) > 0 {
+	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= LOG_INFO && len(v) > 0 {
 		print(LOG_INFO, v...)
 	}
 }
 
 func Debug(v ...interface{}) {
-	if effectiveLogLevel >= LOG_DEBUG && len(v) > 0 {
+	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= LOG_DEBUG && len(v) > 0 {
 		print(LOG_DEBUG, v...)
 	}
 }
 
 func Trace(v ...interface{}) {
-	if effectiveLogLevel >= LOG_TRACE && len(v) > 0 {
+	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= LOG_TRACE && len(v) > 0 {
 		print(LOG_TRACE, v...)
 	}
 }
