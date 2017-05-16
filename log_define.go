@@ -179,7 +179,7 @@ func NewPreference(logFolder string) preference	{
 		}
 	}
 
-	pref.ShowMethod = false
+	pref.ShowMethod = true
 	pref.logFolder = logFolder
 	pref.ProcessName = getProgramName()
 	pref.DefaultLogLevel = LOG_TRACE
