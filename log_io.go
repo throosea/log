@@ -169,7 +169,7 @@ func removeOldLogFiles() {
 		}
 
 		createdDateExpression := file.Name()[dotIndex+1:lastDotIndex]
-		createdDate, err := time.Parse(TIME_YYYYMMDD, createdDateExpression)
+		createdDate, err := time.ParseInLocation(TIME_YYYYMMDD, createdDateExpression, time.Local)
 		if err != nil {
 			continue
 		}
