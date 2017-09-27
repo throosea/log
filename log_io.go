@@ -121,7 +121,8 @@ func moveToBackupLog() {
 		fmt.Printf("fail to open for new log file : %s\n", err)
 	}
 
-	stat, _ = logPreference.logFilePtr.Stat()
+	//stat, _ = logPreference.logFilePtr.Stat()
+	stat, err = os.Stat(logPreference.logFilePath)
 	logPreference.currentLogFileTime = stat.ModTime()
 
 	go func() {
