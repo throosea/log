@@ -116,8 +116,8 @@ func (this *GeneralLogEvent) buildSourceDescription(source string) string {
 	return buffer.String()
 }
 
-func (this *GeneralLogEvent) getTime() *time.Time {
-	return &this.t
+func (this *GeneralLogEvent) getTime() time.Time {
+	return this.t
 }
 
 func (this *GeneralLogEvent) setLevel(level int) {

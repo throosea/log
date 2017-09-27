@@ -74,7 +74,7 @@ type LogStreamMode uint8
 
 // log event
 type LogEvent interface {
-	getTime() *time.Time
+	getTime() time.Time
 	getMessage() string
 	setLevel(level int)
 	setArgs(args ...interface{})
