@@ -38,9 +38,6 @@ const (
 	TIME_YYYYMMDD = "2006-01-02"
 )
 
-var (
-	logBackupedTime = time.Now()
-)
 func writeLogEvent(log LogEvent) {
 	log.publish()
 	if logPreference.streamMode == STREAM_MODE_STDOUT {
@@ -56,13 +53,6 @@ func ensureTodayLog(t time.Time) {
 	if logPreference.currentLogFileTime.Year() != t.Year() ||
 		logPreference.currentLogFileTime.Month() != t.Month() ||
 		logPreference.currentLogFileTime.Day() != t.Day() {
-			fmt.Printf("%d-%d-%d = %d-%d-%d\n",
-				logPreference.currentLogFileTime.Year(),
-				logPreference.currentLogFileTime.Month(),
-				logPreference.currentLogFileTime.Day(),
-				t.Year(),
-				t.Month(),
-				t.Day())
 		moveToBackupLog()
 	}
 }
@@ -128,30 +118,36 @@ func moveToBackupLog() {
 		fmt.Printf("fail to rename [%s] -> [%s] : %s\n", logPreference.logFilePath, backupFilePath, err.Error())
 	}
 
-	// open for new log file
-	logPreference.logFilePtr, err = os.OpenFile(logPreference.logFilePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
-	if err != nil {
-		fmt.Printf("fail to open for new log file : %s\n", err.Error())
-	}
-
-	//stat, _ = logPreference.logFilePtr.Stat()
-	stat, err = os.Stat(logPreference.logFilePath)
-	if err != nil {
-		fmt.Printf("fail to stat %s : %s\n", logPreference.logFilePath, err.Error())
-	}
-
-	logPreference.currentLogFileTime = stat.ModTime()
-	fmt.Printf("stat.ModTime() : %d-%d-%d\n",
-		logPreference.currentLogFileTime.Year(),
-		logPreference.currentLogFileTime.Month(),
-		logPreference.currentLogFileTime.Day())
-
-	logBackupedTime = time.Now()
-	fmt.Printf("logBackupedTime = %s", logBackupedTime)
-
 	go func() {
 		removeOldLogFiles()
 	}()
+
+	for {
+		// wait for file-io cache released
+		time.Sleep(time.Millisecond * 1)
+
+		// open for new log file
+		logPreference.logFilePtr, err = os.OpenFile(logPreference.logFilePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
+		if err != nil {
+			fmt.Printf("fail to open for new log file : %s\n", err.Error())
+		}
+
+		stat, err = logPreference.logFilePtr.Stat()
+		if err != nil {
+			fmt.Printf("fail to stat %s : %s\n", logPreference.logFilePath, err.Error())
+			return
+		}
+
+		if stat.ModTime().Year() == logPreference.currentLogFileTime.Year() &&
+			stat.ModTime().Month() == logPreference.currentLogFileTime.Month() &&
+				stat.ModTime().Day() == logPreference.currentLogFileTime.Day() {
+			logPreference.logFilePtr.Close()
+			continue
+		}
+
+		logPreference.currentLogFileTime = stat.ModTime()
+		break
+	}
 }
 
 func writeLogEventToFile(s string) (n int, err error) {
