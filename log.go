@@ -144,7 +144,10 @@ func NewCustomLogger(loglevel string) customLogger {
 
 func (c customLogger) Printf(format string, a ...interface{}) {
 	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= c.level  {
-		print(3, c.level, format, a)
+		var s []interface{}
+		s = append(s, format)
+		s = append(s, a...)
+		print(3, c.level, s...)
 	}
 }
 
