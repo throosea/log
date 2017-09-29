@@ -76,7 +76,7 @@ type LogStreamMode uint8
 type LogEvent interface {
 	getTime() time.Time
 	getMessage() string
-	setLevel(level int)
+	setLevel(level LogLevel)
 	setArgs(args ...interface{})
 	publish()
 }
@@ -122,6 +122,23 @@ func ConvertHexaToLogLevel(value string) (LogLevel, error) {
 		return LOG_TRACE, nil
 	}
 	return LOG_NONE, nil
+}
+
+
+func ConvertStringToLogLevel(value string) (LogLevel) {
+	switch strings.ToLower(value) {
+	case "error" :
+		return LOG_ERROR
+	case "warn":
+		return LOG_WARN
+	case "info":
+		return LOG_INFO
+	case "debug":
+		return LOG_DEBUG
+	case "trace":
+		return LOG_TRACE
+	}
+	return LOG_NONE
 }
 
 func ConvertLogLevelToHexa(value string) string {

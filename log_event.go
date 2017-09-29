@@ -120,7 +120,7 @@ func (this *GeneralLogEvent) getTime() time.Time {
 	return this.t
 }
 
-func (this *GeneralLogEvent) setLevel(level int) {
+func (this *GeneralLogEvent) setLevel(level LogLevel) {
 	switch level {
 	case LOG_ERROR:
 		this.level = "ERROR"

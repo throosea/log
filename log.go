@@ -131,38 +131,55 @@ func Close() error {
 	}
 }
 
+
+type customLogger struct{
+	level LogLevel
+}
+
+func NewCustomLogger(loglevel string) customLogger {
+	logger := customLogger{}
+	logger.level = ConvertStringToLogLevel(loglevel)
+	return logger
+}
+
+func (c customLogger) Printf(format string, a ...interface{}) {
+	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= c.level  {
+		print(3, c.level, format, a)
+	}
+}
+
 func Error(v ...interface{}) {
 	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= LOG_ERROR && len(v) > 0 {
-		print(LOG_ERROR, v...)
+		print(2, LOG_ERROR, v...)
 	}
 }
 
 func Warn(v ...interface{}) {
 	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= LOG_WARN && len(v) > 0 {
-		print(LOG_WARN, v...)
+		print(2, LOG_WARN, v...)
 	}
 }
 
 func Info(v ...interface{}) {
 	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= LOG_INFO && len(v) > 0 {
-		print(LOG_INFO, v...)
+		print(2, LOG_INFO, v...)
 	}
 }
 
 func Debug(v ...interface{}) {
 	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= LOG_DEBUG && len(v) > 0 {
-		print(LOG_DEBUG, v...)
+		print(2, LOG_DEBUG, v...)
 	}
 }
 
 func Trace(v ...interface{}) {
 	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= LOG_TRACE && len(v) > 0 {
-		print(LOG_TRACE, v...)
+		print(2, LOG_TRACE, v...)
 	}
 }
 
-func print(level int, v ...interface{}) {
-	pc, file, line, _ := runtime.Caller(2)
+func print(skip int, level LogLevel, v ...interface{}) {
+	pc, file, line, _ := runtime.Caller(skip)
 
 	var logEvent LogEvent
 
