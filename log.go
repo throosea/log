@@ -151,10 +151,24 @@ func (c customLogger) Printf(format string, a ...interface{}) {
 	}
 }
 
+func IsErrorEnabled() bool {
+	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= LOG_ERROR {
+		return true
+	}
+	return false
+}
+
 func Error(v ...interface{}) {
 	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= LOG_ERROR && len(v) > 0 {
 		print(2, LOG_ERROR, v...)
 	}
+}
+
+func IsWarnEnabled() bool {
+	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= LOG_WARN  {
+		return true
+	}
+	return false
 }
 
 func Warn(v ...interface{}) {
@@ -163,16 +177,37 @@ func Warn(v ...interface{}) {
 	}
 }
 
+func IsInfoEnabled() bool {
+	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= LOG_INFO  {
+		return true
+	}
+	return false
+}
+
 func Info(v ...interface{}) {
 	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= LOG_INFO && len(v) > 0 {
 		print(2, LOG_INFO, v...)
 	}
 }
 
+func IsDebugEnabled() bool {
+	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= LOG_DEBUG  {
+		return true
+	}
+	return false
+}
+
 func Debug(v ...interface{}) {
 	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= LOG_DEBUG && len(v) > 0 {
 		print(2, LOG_DEBUG, v...)
 	}
+}
+
+func IsTraceEnabled() bool {
+	if loggerStatus == LOGGING_STATUS_RUNNING && effectiveLogLevel >= LOG_TRACE {
+		return true
+	}
+	return false
 }
 
 func Trace(v ...interface{}) {
