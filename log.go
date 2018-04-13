@@ -33,7 +33,7 @@ import (
 
 var writingLogEvent = false
 
-var logEventChannel = make(chan LogEvent, 1024)
+var logEventChannel = make(chan LogEvent, 4096)
 
 var effectiveLogLevel LogLevel = LOG_NONE
 
