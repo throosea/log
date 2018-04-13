@@ -124,7 +124,7 @@ func moveToBackupLog() {
 
 	for {
 		// wait for file-io cache released
-		time.Sleep(time.Millisecond * 1)
+		time.Sleep(time.Second * 1)
 
 		// open for new log file
 		logPreference.logFilePtr, err = os.OpenFile(logPreference.logFilePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
