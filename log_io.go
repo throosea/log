@@ -32,11 +32,14 @@ import (
 	"io/ioutil"
 	"regexp"
 	"strings"
+	"strconv"
 )
 
 const (
 	TIME_YYYYMMDD = "2006-01-02"
 )
+
+var Hertz = 100	// general linux CLK_TCK
 
 func writeLogEvent(log LogEvent) {
 	log.publish()
@@ -124,7 +127,7 @@ func moveToBackupLog() {
 
 	for {
 		// wait for file-io cache released
-		time.Sleep(time.Second * 1)
+		time.Sleep(time.Millisecond * time.Duration(1000 / Hertz))
 
 		// open for new log file
 		logPreference.logFilePtr, err = os.OpenFile(logPreference.logFilePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
