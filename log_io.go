@@ -32,14 +32,12 @@ import (
 	"io/ioutil"
 	"regexp"
 	"strings"
-	"strconv"
 )
 
 const (
 	TIME_YYYYMMDD = "2006-01-02"
+	Hertz = 100	// general linux CLK_TCK
 )
-
-var Hertz = 100	// general linux CLK_TCK
 
 func writeLogEvent(log LogEvent) {
 	log.publish()
