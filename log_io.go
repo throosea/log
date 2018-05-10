@@ -143,7 +143,10 @@ func moveToBackupLog() {
 			stat.ModTime().Month() == logPreference.currentLogFileTime.Month() &&
 				stat.ModTime().Day() == logPreference.currentLogFileTime.Day() {
 			logPreference.logFilePtr.Close()
-			os.Remove(logPreference.logFilePath)
+			err = os.Remove(logPreference.logFilePath)
+			if err != nil {
+				fmt.Printf("fail to remove log file : %s\n", err.Error())
+			}
 			continue
 		}
 
