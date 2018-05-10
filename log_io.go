@@ -143,6 +143,7 @@ func moveToBackupLog() {
 			stat.ModTime().Month() == logPreference.currentLogFileTime.Month() &&
 				stat.ModTime().Day() == logPreference.currentLogFileTime.Day() {
 			logPreference.logFilePtr.Close()
+			os.Remove(logPreference.logFilePath)
 			continue
 		}
 
