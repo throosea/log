@@ -208,6 +208,33 @@ func NewPreference(logFolder string) preference	{
 	return pref
 }
 
+func NewPreferenceWithProcName(logFolder string, procName string) preference	{
+	pref := preference{}
+
+	if len(logFolder) < 1 {
+		pref.streamMode = STREAM_MODE_STDOUT
+	} else {
+		err := ensureDirectory(logFolder)
+		if err != nil {
+			fmt.Printf("fail to prepare log folder : %s\n", err.Error())
+			pref.streamMode = STREAM_MODE_STDOUT
+		} else {
+			pref.streamMode = STREAM_MODE_FILE
+		}
+	}
+
+	pref.ShowMethod = true
+	pref.logFolder = logFolder
+	pref.ProcessName = procName
+	pref.DefaultLogLevel = LOG_TRACE
+	pref.DeliveryMode = DELIVERY_MODE_SYNC
+	pref.KeepingFileDays = DEFAULT_KEEPING_FILE_DAYS
+	pref.SourcePrintSize = DEFAULT_SOURCE_PRINT_SIZE
+	pref.MaxErrorTraceLevel = DEFAULT_ERROR_TRACE_LEVEL
+
+	return pref
+}
+
 func normalizePreference(pref *preference) {
 	if pref.KeepingFileDays < 1 {
 		pref.KeepingFileDays = DEFAULT_KEEPING_FILE_DAYS
