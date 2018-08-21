@@ -123,7 +123,7 @@ func moveToBackupLog() {
 		removeOldLogFiles()
 	}()
 
-	// wait for file-io cache released
+	// wait for file-io cache released : skip 1 tick
 	time.Sleep(time.Millisecond * time.Duration(1000 / Hertz))
 
 	// open for new log file
@@ -136,69 +136,6 @@ func moveToBackupLog() {
 
 	logPreference.currentLogFileTime = time.Now()
 }
-
-//func moveToBackupLog() {
-//	var err error
-//	var stat os.FileInfo
-//
-//	stat, err = os.Stat(logPreference.logFilePath)
-//	if err != nil {
-//		fmt.Printf("fail to stat log file : %s\n", err)
-//		logPreference.logFilePtr = nil
-//		return
-//	}
-//
-//	// close current log file ptr
-//	if logPreference.logFilePtr != nil {
-//		logPreference.logFilePtr.Close()
-//		logPreference.logFilePtr = nil
-//	}
-//
-//	// move current file to backup
-//	backupFilePath := fmt.Sprintf("%s%c%s.%s.log",
-//		logPreference.logFolder,
-//		filepath.Separator,
-//		logPreference.ProcessName, stat.ModTime().Format(TIME_YYYYMMDD))
-//	err = os.Rename(logPreference.logFilePath, backupFilePath)
-//	if err != nil {
-//		fmt.Printf("fail to rename [%s] -> [%s] : %s\n", logPreference.logFilePath, backupFilePath, err.Error())
-//	}
-//
-//	go func() {
-//		removeOldLogFiles()
-//	}()
-//
-//	for {
-//		// wait for file-io cache released
-//		time.Sleep(time.Millisecond * time.Duration(1000 / Hertz))
-//
-//		// open for new log file
-//		logPreference.logFilePtr, err = os.OpenFile(logPreference.logFilePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
-//		if err != nil {
-//			fmt.Printf("fail to open for new log file : %s\n", err.Error())
-//		}
-//
-//		stat, err = logPreference.logFilePtr.Stat()
-//		if err != nil {
-//			fmt.Printf("fail to stat %s : %s\n", logPreference.logFilePath, err.Error())
-//			return
-//		}
-//
-//		if stat.ModTime().Year() == logPreference.currentLogFileTime.Year() &&
-//			stat.ModTime().Month() == logPreference.currentLogFileTime.Month() &&
-//				stat.ModTime().Day() == logPreference.currentLogFileTime.Day() {
-//			logPreference.logFilePtr.Close()
-//			err = os.Remove(logPreference.logFilePath)
-//			if err != nil {
-//				fmt.Printf("fail to remove log file : %s\n", err.Error())
-//			}
-//			continue
-//		}
-//
-//		logPreference.currentLogFileTime = stat.ModTime()
-//		break
-//	}
-//}
 
 func writeLogEventToFile(s string) (n int, err error) {
 	if logPreference.logFilePtr == nil {
