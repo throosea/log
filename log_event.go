@@ -79,6 +79,7 @@ func (this *GeneralLogEvent) buildMessage(f func() string) string {
 	var tokens = strings.Split(location, "/")
 	var length = len(tokens)
 	for i, s := range tokens {
+		fmt.Printf("len=%d, i=%d, s=[%s]\n", len(tokens), i, s)
 		if i < length-1 {
 			buffer.WriteByte(s[0])
 			buffer.WriteByte('.')
