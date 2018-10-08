@@ -73,6 +73,11 @@ func (this *GeneralLogEvent) buildMessage(f func() string) string {
 	var found = strings.LastIndex(this.file, "/src/")
 	if found > 0 {
 		location = string(this.file[found+5:])
+	} else {
+		found = strings.LastIndex(this.file, "/mod/")
+		if found > 0 {
+			location = string(this.file[found+5:])
+		}
 	}
 
 	var buffer bytes.Buffer
@@ -80,6 +85,10 @@ func (this *GeneralLogEvent) buildMessage(f func() string) string {
 	var length = len(tokens)
 	for i, s := range tokens {
 		fmt.Printf("len=%d, i=%d, s=[%s]\n", len(tokens), i, s)
+		if len(s) == 0 {
+			continue
+		}
+
 		if i < length-1 {
 			buffer.WriteByte(s[0])
 			buffer.WriteByte('.')
