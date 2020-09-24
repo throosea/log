@@ -64,6 +64,7 @@ func Initialize(pref preference)  {
 		}()
 	}
 	SetLevel(logPreference.DefaultLogLevel)
+	sentryInit()
 }
 
 func SetSourcePrintSize(newValue uint8) {
@@ -103,6 +104,21 @@ func SetFileSizeLimitMB(mb uint16)	{
 
 	logPreference.LogfileSizeLimitMB = mb
 	Info("[Not yet support] logging file size limit to %d MB", logPreference.LogfileSizeLimitMB)
+}
+
+func SetSentryDsn(dsn string, tags map[string]string)	{
+	logPreference.sentryDsn = dsn
+	logPreference.sentryTag = tags
+}
+
+func SetSentryFlushSecond(second int)	{
+	if second > 0 {
+		logPreference.sentryFlushSecond = uint8(second)
+	}
+}
+
+func SetSentryLogLevel(logLevel string)	{
+	logPreference.sentryLogLevel = ConvertStringToLogLevel(logLevel)
 }
 
 func SetLevel(level LogLevel) {
@@ -221,8 +237,8 @@ func print(skip int, level LogLevel, v ...interface{}) {
 
 	var logEvent LogEvent
 
-	if _, ok := v[len(v)-1].(error); ok {
-		errEvent := newErrorTraceLogEvent(pc, file, line)
+	if originError, ok := v[len(v)-1].(error); ok {
+		errEvent := newErrorTraceLogEvent(pc, file, line, originError)
 		for i := 3; i < int(logPreference.MaxErrorTraceLevel); i++ {
 			pc, file, line, exist := runtime.Caller(i)
 			if !exist {

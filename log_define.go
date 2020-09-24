@@ -55,6 +55,7 @@ const (
 	DEFAULT_KEEPING_FILE_DAYS = 90
 	DEFAULT_SOURCE_PRINT_SIZE = 30
 	DEFAULT_ERROR_TRACE_LEVEL = 10
+	DEFAULT_SENTRY_FLUSH_SECOND = 2
 )
 
 // logging preference delivery mode
@@ -81,7 +82,7 @@ type LogEvent interface {
 	publish()
 }
 
-// log level type
+// log levelStr type
 type LogLevel uint8
 
 func (this LogLevel) String() string {
@@ -172,6 +173,10 @@ type preference struct {
 	LogfileSizeLimitMB uint16
 	MaxErrorTraceLevel uint8
 	ProcessName        string
+	sentryDsn 		   string
+	sentryTag 		   map[string]string
+	sentryFlushSecond  uint8
+	sentryLogLevel     LogLevel
 	DefaultLogLevel    LogLevel
 	DeliveryMode       LogDeliveryMode
 	logFileLoaded      bool
@@ -182,33 +187,18 @@ type preference struct {
 
 
 func NewPreference(logFolder string) preference	{
-	pref := preference{}
-
-	if len(logFolder) < 1 {
-		pref.streamMode = STREAM_MODE_STDOUT
-	} else {
-		err := ensureDirectory(logFolder)
-		if err != nil {
-			fmt.Printf("fail to prepare log folder : %s\n", err.Error())
-			pref.streamMode = STREAM_MODE_STDOUT
-		} else {
-			pref.streamMode = STREAM_MODE_FILE
-		}
-	}
-
-	pref.ShowMethod = true
-	pref.logFolder = logFolder
+	pref := createDefaultPreference(logFolder)
 	pref.ProcessName = getProgramName()
-	pref.DefaultLogLevel = LOG_TRACE
-	pref.DeliveryMode = DELIVERY_MODE_SYNC
-	pref.KeepingFileDays = DEFAULT_KEEPING_FILE_DAYS
-	pref.SourcePrintSize = DEFAULT_SOURCE_PRINT_SIZE
-	pref.MaxErrorTraceLevel = DEFAULT_ERROR_TRACE_LEVEL
-
 	return pref
 }
 
 func NewPreferenceWithProcName(logFolder string, procName string) preference	{
+	pref := createDefaultPreference(logFolder)
+	pref.ProcessName = procName
+	return pref
+}
+
+func createDefaultPreference(logFolder string)	preference	{
 	pref := preference{}
 
 	if len(logFolder) < 1 {
@@ -223,14 +213,15 @@ func NewPreferenceWithProcName(logFolder string, procName string) preference	{
 		}
 	}
 
-	pref.ShowMethod = true
 	pref.logFolder = logFolder
-	pref.ProcessName = procName
+	pref.ShowMethod = true
 	pref.DefaultLogLevel = LOG_TRACE
 	pref.DeliveryMode = DELIVERY_MODE_SYNC
 	pref.KeepingFileDays = DEFAULT_KEEPING_FILE_DAYS
 	pref.SourcePrintSize = DEFAULT_SOURCE_PRINT_SIZE
 	pref.MaxErrorTraceLevel = DEFAULT_ERROR_TRACE_LEVEL
+	pref.sentryFlushSecond = DEFAULT_SENTRY_FLUSH_SECOND
+	pref.sentryLogLevel = LOG_ERROR
 
 	return pref
 }

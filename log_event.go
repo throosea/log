@@ -46,7 +46,8 @@ func newGeneralLogEvent(pc uintptr, file string, line int) *GeneralLogEvent {
 type GeneralLogEvent struct {
 	t         time.Time
 	pc        uintptr
-	level     string
+	level 	  LogLevel
+	levelStr  string
 	file      string
 	funcName  string
 	line      int
@@ -59,13 +60,18 @@ func (this *GeneralLogEvent) getMessage() string {
 }
 
 func (this *GeneralLogEvent) publish() {
+	var express string
+	if format, ok := this.message[0].(string); ok {
+		express = fmt.Sprintf(format, this.message[1:]...)
+	} else {
+		express = fmt.Sprintf("%v", this.message[0])
+	}
+
 	this.published = this.buildMessage(func() string {
-		if format, ok := this.message[0].(string); ok {
-			return fmt.Sprintf(format, this.message[1:]...)
-		} else {
-			return fmt.Sprintf("%v", this.message[0])
-		}
+		return express
 	})
+
+	sentrySendMessage(this.level, express)
 }
 
 func (this *GeneralLogEvent) buildMessage(f func() string) string {
@@ -98,7 +104,7 @@ func (this *GeneralLogEvent) buildMessage(f func() string) string {
 
 	return fmt.Sprintf("%s %s [%s] %s\n",
 		this.t.Format("2006-01-02 15:04:05.000"),
-		this.level,
+		this.levelStr,
 		this.buildSourceDescription(buffer.String()),
 		f())
 }
@@ -130,17 +136,18 @@ func (this *GeneralLogEvent) getTime() time.Time {
 }
 
 func (this *GeneralLogEvent) setLevel(level LogLevel) {
+	this.level = level
 	switch level {
 	case LOG_ERROR:
-		this.level = "ERROR"
+		this.levelStr = "ERROR"
 	case LOG_WARN:
-		this.level = "WARN "
+		this.levelStr = "WARN "
 	case LOG_INFO:
-		this.level = "INFO "
+		this.levelStr = "INFO "
 	case LOG_DEBUG:
-		this.level = "DEBUG"
+		this.levelStr = "DEBUG"
 	case LOG_TRACE:
-		this.level = "TRACE"
+		this.levelStr = "TRACE"
 	}
 }
 

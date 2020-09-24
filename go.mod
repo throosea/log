@@ -1,1 +1,5 @@
 module throosea.com/log
+
+go 1.12
+
+require github.com/getsentry/sentry-go v0.7.0

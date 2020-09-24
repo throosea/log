@@ -32,13 +32,14 @@ import (
 	"time"
 )
 
-func newErrorTraceLogEvent(pc uintptr, file string, line int) *ErrorTraceLogEvent {
+func newErrorTraceLogEvent(pc uintptr, file string, line int, originError error) *ErrorTraceLogEvent {
 	event := ErrorTraceLogEvent{}
 	event.t = time.Now()
 	event.announce = false
 	event.pc = pc
 	event.file = file
 	event.line = line
+	event.originError = originError
 	event.tracePoint = make([]TracePoint, 0)
 	if logPreference.ShowMethod {
 		event.funcName = findFunctionName(pc)
@@ -55,6 +56,7 @@ type TracePoint struct {
 type ErrorTraceLogEvent struct {
 	GeneralLogEvent
 	announce   bool
+	originError	error
 	tracePoint []TracePoint
 }
 
@@ -86,6 +88,10 @@ func (event *ErrorTraceLogEvent) publish() {
 	buffer.WriteString(codeLine)
 	buffer.WriteString(event.getTrace())
 	event.published = buffer.String()
+
+	if event.originError != nil {
+		sentrySendException(event.level, event.originError)
+	}
 }
 
 func (event *ErrorTraceLogEvent) getTrace() string {
