@@ -114,12 +114,16 @@ func sentrySendException(level LogLevel, err error)	{
 }
 
 func getSentryHub(level LogLevel)	*sentry.Hub	{
+	fmt.Printf("getSentryHub : [%v]\n", level)
 	if !sentryConnect	{
 		return nil
 	}
 
 	switch level {
-	case LOG_ERROR :return sentryError
+	case LOG_ERROR :
+
+		fmt.Printf("getSentryHub. sentryError : [%v]\n", sentryError)
+		return sentryError
 	case LOG_WARN :	return sentryWarn
 	case LOG_INFO :	return sentryInfo
 	}
