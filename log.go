@@ -64,7 +64,6 @@ func Initialize(pref preference)  {
 		}()
 	}
 	SetLevel(logPreference.DefaultLogLevel)
-	sentryInit()
 }
 
 func SetSourcePrintSize(newValue uint8) {

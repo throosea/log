@@ -42,7 +42,7 @@ var (
 	sentryInfo	*sentry.Hub
 )
 
-func sentryInit()	{
+func SentryInit()	{
 	if len(logPreference.sentryDsn) < 8	{
 		return
 	}
