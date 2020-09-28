@@ -85,15 +85,15 @@ func SentryInit()	{
 		scope.SetTag("process", process)
 	})
 
-	if logPreference.sentryLogLevel <= LOG_INFO {
+	if logPreference.sentryLogLevel >= LOG_INFO {
 		sentryInfo = sentry.CurrentHub().Clone()
 		sentryInfo.Scope().SetLevel(sentry.LevelInfo)
 	}
-	if logPreference.sentryLogLevel <= LOG_WARN {
+	if logPreference.sentryLogLevel >= LOG_WARN {
 		sentryWarn = sentry.CurrentHub().Clone()
 		sentryWarn.Scope().SetLevel(sentry.LevelWarning)
 	}
-	if logPreference.sentryLogLevel <= LOG_ERROR {
+	if logPreference.sentryLogLevel >= LOG_ERROR {
 		sentryError = sentry.CurrentHub().Clone()
 		sentryError.Scope().SetLevel(sentry.LevelError)
 	}
