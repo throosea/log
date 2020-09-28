@@ -43,6 +43,7 @@ var (
 )
 
 func SentryInit()	{
+	fmt.Printf("Sentry Init : logPreference.sentryLogLevel=[%s]\n", logPreference.sentryLogLevel)
 	if len(logPreference.sentryDsn) < 8	{
 		fmt.Printf("discard invalid sentry dsn [%s]\n", logPreference.sentryDsn)
 		return
