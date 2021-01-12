@@ -106,6 +106,29 @@ ProcessName | string | program name | running program(process) name
 DefaultLogLevel | LogLevel | TRACE | default logging level
 DeliveryMode | LogDeliveryMode | DELIVERY_MODE_SYNC | sync or async
 
+## Sentry Integration ##
+func SetSentryDsn(dsn string, tags map[string]string)
+- dsn : sentry dsn url
+- tags : sentry tags...
+
+func SetSentryFlushSecond(second int)
+- default 2 seconds
+
+func SetSentryLogLevel(logLevel string)
+- default "error"
+
+```
+// example code
+
+m := make(map[string]string)
+m["environment"] = "prod"
+m["serverName"] = "event01"
+m["process"] = "myprocess"
+log.SetSentryDsn(dsn, m)
+log.SetSentryLogLevel("warn")
+log.SetSentryFlushSecond(1)
+```
+
 ## DeliveryMode ##
 
 * DELIVERY_MODE_SYNC
